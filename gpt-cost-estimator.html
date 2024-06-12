@@ -3,33 +3,80 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Cost Calculation and Plot</title>
+    <title>openAI GPT API cost calculator</title>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
+        .container {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 20px;
+        }
+        .panel {
+            border: 1px solid #ccc;
+            border-radius: 8px;
+            padding: 20px;
+            box-shadow: 2px 2px 12px rgba(0, 0, 0, 0.1);
+        }
         .input-group {
             margin-bottom: 10px;
+        }
+        .button-container {
+            display: flex;
+            justify-content: center;
+            width: 100%;
+            margin-bottom: 20px;
+        }
+        footer {
+            text-align: right;
+            margin-top: 20px;
+            color: #888;
+        }
+        footer small {
+            font-size: 0.8em;
         }
     </style>
 </head>
 <body>
-    <div class="input-group">
-        <label for="steps">Number of Steps:</label>
-        <input type="number" id="steps" value="20">
-        <button id="updateButton">Draw Chart</button>
+    <h1>openAI GPT API cost calculator</h1>
+    <div class="container">
+        <div class="panel">
+            <div class="input-group">
+                <label for="steps">Steps in Each Conversation:</label>
+                <input type="number" id="steps" value="20">
+            </div>
+            <div class="input-group">
+                <label for="inputCostFactor">Cost per Million Tokens (Input, dollars):</label>
+                <input type="number" id="inputCostFactor" value="5">
+                <label for="avgTokensRequest">Average Tokens per Request:</label>
+                <input type="number" id="avgTokensRequest" value="40">
+            </div>
+            <div class="input-group">
+                <label for="outputCostFactor">Cost per Million Tokens (Output, dollars):</label>
+                <input type="number" id="outputCostFactor" value="15">
+                <label for="avgTokensReply">Average Tokens per Reply:</label>
+                <input type="number" id="avgTokensReply" value="100">
+            </div>
+        </div>
+        <div class="panel">
+            <div class="input-group">
+                <label for="monthlyBudget">Monthly Budget (dollars):</label>
+                <input type="number" id="monthlyBudget" value="1000">
+            </div>
+            <h3>Cost per Calculation</h3>
+            <p id="costPerCalculation">Calculating...</p>
+            <h3>Conversations per Month</h3>
+            <p id="conversationsPerMonth">Calculating...</p>
+        </div>
     </div>
-    <div class="input-group">
-        <label for="inputCostFactor">Cost per Million Tokens (Input):</label>
-        <input type="number" id="inputCostFactor" value="5">
-        <label for="avgTokensRequest">Average Tokens per Request:</label>
-        <input type="number" id="avgTokensRequest" value="40">
+    <div class="button-container">
+        <button id="updateButton">Calculate and Draw Chart</button>
     </div>
-    <div class="input-group">
-        <label for="outputCostFactor">Cost per Million Tokens (Output):</label>
-        <input type="number" id="outputCostFactor" value="15">
-        <label for="avgTokensReply">Average Tokens per Reply:</label>
-        <input type="number" id="avgTokensReply" value="100">
-    </div>
+    <h2>Cost Development in a Single Conversation over n Question/Answer Pair (Step)</h2>
     <canvas id="costChart" width="400" height="200"></canvas>
+    <footer>
+        <small>by Philipp Tögel, without guarantee</small>
+    </footer>
     <script>
         document.addEventListener("DOMContentLoaded", function() {
             const ctx = document.getElementById('costChart').getContext('2d');
@@ -41,6 +88,7 @@
                 const outputCostFactor = parseFloat(document.getElementById('outputCostFactor').value) / 1e6;
                 const avgTokensRequest = parseFloat(document.getElementById('avgTokensRequest').value);
                 const avgTokensReply = parseFloat(document.getElementById('avgTokensReply').value);
+                const monthlyBudget = parseFloat(document.getElementById('monthlyBudget').value);
 
                 const inputCosts = [];
                 const outputCosts = [];
@@ -102,7 +150,7 @@
                         responsive: true,
                         title: {
                             display: true,
-                            text: 'Cost Calculation and Plot'
+                            text: 'Cost development in a single conversation over n question/answer pair (step)'
                         },
                         tooltips: {
                             mode: 'index',
@@ -130,6 +178,14 @@
                         }
                     }
                 });
+
+                // Calculate cost per calculation
+                const totalCostPerConversation = totalCosts[totalCosts.length - 1];
+                document.getElementById('costPerCalculation').innerText = totalCostPerConversation.toFixed(2);
+
+                // Calculate conversations per month
+                const conversationsPerMonth = Math.floor(monthlyBudget / totalCostPerConversation);
+                document.getElementById('conversationsPerMonth').innerText = conversationsPerMonth.toLocaleString();
             }
 
             document.getElementById('updateButton').addEventListener('click', calculateAndPlot);
