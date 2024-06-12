@@ -5,20 +5,29 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Cost Calculation and Plot</title>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        .input-group {
+            margin-bottom: 10px;
+        }
+    </style>
 </head>
 <body>
-    <div>
+    <div class="input-group">
         <label for="steps">Number of Steps:</label>
         <input type="number" id="steps" value="20">
+        <button id="updateButton">Draw Chart</button>
+    </div>
+    <div class="input-group">
         <label for="inputCostFactor">Cost per Million Tokens (Input):</label>
         <input type="number" id="inputCostFactor" value="5">
-        <label for="outputCostFactor">Cost per Million Tokens (Output):</label>
-        <input type="number" id="outputCostFactor" value="15">
         <label for="avgTokensRequest">Average Tokens per Request:</label>
         <input type="number" id="avgTokensRequest" value="40">
+    </div>
+    <div class="input-group">
+        <label for="outputCostFactor">Cost per Million Tokens (Output):</label>
+        <input type="number" id="outputCostFactor" value="15">
         <label for="avgTokensReply">Average Tokens per Reply:</label>
         <input type="number" id="avgTokensReply" value="100">
-        <button id="updateButton">Update Chart</button>
     </div>
     <canvas id="costChart" width="400" height="200"></canvas>
     <script>
