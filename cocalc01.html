@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nachrichtenberechnung</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+    <h1>Nachrichtenberechnung und Visualisierung</h1>
+    <label for="steps">Anzahl der Schritte:</label>
+    <input type="number" id="steps" value="5" min="1">
+    <button onclick="calculateAndDraw()">Berechnen und Visualisieren</button>
+    <canvas id="myChart" width="400" height="200"></canvas>
+
+    <script>
+        function calculateAndDraw() {
+            const steps = document.getElementById('steps').value;
+            const labels = [];
+            const data = [];
+
+            for (let k = 1; k <= steps; k++) {
+                const T_k = k * (k + 1);
+                labels.push(`Schritt ${k}`);
+                data.push(T_k);
+            }
+
+            const ctx = document.getElementById('myChart').getContext('2d');
+            const myChart = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        label: 'Nachrichtenanzahl T(k)',
+                        data: data,
+                        backgroundColor: 'rgba(75, 192, 192, 0.2)',
+                        borderColor: 'rgba(75, 192, 192, 1)',
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    scales: {
+                        y: {
+                            beginAtZero: true
+                        }
+                    }
+                }
+            });
+        }
+
+        // Initial draw
+        calculateAndDraw();
+    </script>
+</body>
+</html>
